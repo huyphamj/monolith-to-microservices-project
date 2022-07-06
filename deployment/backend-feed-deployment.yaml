@@ -70,9 +70,9 @@ spec:
           requests:
             memory: "128Mi"
             cpu: "500m"
-          # limits:
-          #   memory: "4Gi"
-          #   cpu: "1000m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
         # volumeMounts:
         # - name: backend-feed-postgres-data
         #   mountPath: /var/lib/postgresql/data
