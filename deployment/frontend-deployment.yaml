@@ -19,4 +19,4 @@ spec:
       - name: frontend
         image: huyphamjj/udagram-frontend:2.0
         ports:
-        - containerPort: 8100
+        - containerPort: 80
