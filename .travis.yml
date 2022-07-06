@@ -8,15 +8,15 @@ services:
 script:
   # - docker image prune --all
   - docker-compose -f docker-compose-build.yaml build --parallel
-  - docker tag udagram-frontend:local huyphamjj/udagram-frontend:local
-  - docker tag udagram-api-user huyphamjj/udagram-api-user
-  - docker tag udagram-api-feed huyphamjj/udagram-api-feed
-  - docker tag reverseproxy huyphamjj/reverseproxy
+  - docker tag udagram-frontend:2.0 huyphamjj/udagram-frontend:2.0
+  - docker tag udagram-api-user:2.0 huyphamjj/udagram-api-user:2.0
+  - docker tag udagram-api-feed:2.0 huyphamjj/udagram-api-feed:2.0
+  - docker tag reverseproxy:2.0 huyphamjj/reverseproxy:2.0
 
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push huyphamjj/udagram-frontend:local
-  - docker push huyphamjj/udagram-api-user
-  - docker push huyphamjj/udagram-api-feed
-  - docker push huyphamjj/reverseproxy
+  - docker push huyphamjj/udagram-frontend:local:2.0
+  - docker push huyphamjj/udagram-api-user:2.0
+  - docker push huyphamjj/udagram-api-feed:2.0
+  - docker push huyphamjj/reverseproxy:2.0
 
