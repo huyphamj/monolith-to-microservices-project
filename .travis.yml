@@ -5,18 +5,36 @@ node_js:
 services:
   - docker
 
+before_deploy:
+  # Install kubectl cli
+  - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+  - chmod +x ./kubectl
+  - sudo mv ./kubectl /usr/local/bin/kubectl
+
+  # Install aws cli
+  - 'curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"'
+  - 'unzip awscli-bundle.zip'
+  - './awscli-bundle/install -b ~/bin/aws'
+  - 'export PATH=~/bin:$PATH'
+  - { echo "$AWS_ACCESS_KEY" & sleep 0.1;  echo "$AWS_SECRET_ACCESS_KEY" & sleep 0.1; echo "us-east-1" & sleep 0.1; echo "json" } | aws configure
+
 script:
   # - docker image prune --all
   - docker-compose -f docker-compose-build.yaml build --parallel
-  - docker tag udagram-frontend:2.0 huyphamjj/udagram-frontend:2.0
-  - docker tag udagram-api-user:2.0 huyphamjj/udagram-api-user:2.0
-  - docker tag udagram-api-feed:2.0 huyphamjj/udagram-api-feed:2.0
-  - docker tag reverseproxy:2.0 huyphamjj/reverseproxy:2.0
+  - docker tag udagram-frontend:latest huyphamjj/udagram-frontend:latest
+  - docker tag udagram-api-user:latest huyphamjj/udagram-api-user:latest
+  - docker tag udagram-api-feed:latest huyphamjj/udagram-api-feed:latest
+  - docker tag reverseproxy:latest huyphamjj/reverseproxy:latest
 
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push huyphamjj/udagram-frontend:2.0
-  - docker push huyphamjj/udagram-api-user:2.0
-  - docker push huyphamjj/udagram-api-feed:2.0
-  - docker push huyphamjj/reverseproxy:2.0
-
+  - docker push huyphamjj/udagram-frontend:latest
+  - docker push huyphamjj/udagram-api-user:latest
+  - docker push huyphamjj/udagram-api-feed:latest
+  - docker push huyphamjj/reverseproxy:latest
+  
+  - aws eks --region us-east-1 update-kubeconfig --name UdagramCluster
+  - kubectl apply -f deployment/backend-feed-deployment.yaml
+  - kubectl apply -f deployment/backend-user-deployment.yaml
+  - kubectl apply -f deployment/frontend-deployment.yaml
+  - kubectl apply -f deployment/reverseproxy-deployment.yaml

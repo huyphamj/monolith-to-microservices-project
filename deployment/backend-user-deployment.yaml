@@ -7,6 +7,11 @@ metadata:
     app: backend-user
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   selector:
     matchLabels:
       app: backend-user
@@ -17,7 +22,23 @@ spec:
     spec:
       containers:
       - name: backend-user
-        image: huyphamjj/udagram-api-user:2.0
+        image: huyphamjj/udagram-api-user:latest
+        imagepullpolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 1
+        lifeCycle:
+          preStop:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - sleep 15
         env:
         - name: POSTGRES_DB
           valueFrom:

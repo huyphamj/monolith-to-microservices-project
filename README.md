@@ -1,5 +1,21 @@
 # Udagram Image Filtering Application
 
+## Installation
+
+0. Make sure you have installed cli for node, npm, docker
+1. Add environment variables: see file `set_env.sh`
+2. Run command `docker-compose -f docker-compose-build.yaml build --parallel`
+3. Run command `docker-compose up`
+4. Access via browser: `localhost:8100`
+
+### For deployment
+1. Run command `docker images` to see all running images
+2. Tag the images you want to deploy with `docker tag <image_name> <docker hub repository>/<new_image_name>` (i.e: `docker tag udagram-api-feed huyphamjjudagram-api-feed:latest` - do to all 4 services)
+3. Upload it to docker hub via docker push <image_name>:<tag> (i.e docker push huyphamjj/udagram-api-feed:latest)
+4. Run `aws eks --region us-east-1 update-kubeconfig --name UdagramCluster` to update kubeconfig file
+5. Apply changes to the k8s cluster with deployment and service files in folder `deployment` with command `kubectl apply -f backend-feed-deployment.yaml` and `kubectl apply -f backend-feed-service.yaml` (do also to all 4 services)
+6. Notice that the cluster has been updated.
+
 Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
 
 The project is split into two parts:
