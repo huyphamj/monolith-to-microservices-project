@@ -5,18 +5,28 @@ node_js:
 services:
   - docker
 
-before_deploy:
+before_install:
   # Install kubectl cli
   - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
   - chmod +x ./kubectl
   - sudo mv ./kubectl /usr/local/bin/kubectl
 
   # Install aws cli
-  - 'curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"'
-  - 'unzip awscli-bundle.zip'
-  - './awscli-bundle/install -b ~/bin/aws'
-  - 'export PATH=~/bin:$PATH'
-  - { echo "$AWS_ACCESS_KEY" & sleep 0.1;  echo "$AWS_SECRET_ACCESS_KEY" & sleep 0.1; echo "us-east-1" & sleep 0.1; echo "json" } | aws configure
+  # - sudo apt update
+  # - sudo apt install --assume-yes awscli
+  # - export PATH=~/bin:$PATH
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  - unzip awscliv2.zip
+  - sudo ./aws/install --update
+
+  # Configure aws and eks cluster
+  - aws configure set aws_access_key_id $AWS_ACCESS_KEY
+  - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+  - aws configure set region us-east-1
+  - aws configure set output json
+  - aws eks --region us-east-1 update-kubeconfig --name UdagramCluster
+  - kubectl apply -f deployment/backend-feed-deployment.yaml
+
 
 script:
   # - docker image prune --all
@@ -32,9 +42,5 @@ after_success:
   - docker push huyphamjj/udagram-api-user:latest
   - docker push huyphamjj/udagram-api-feed:latest
   - docker push huyphamjj/reverseproxy:latest
-  
-  - aws eks --region us-east-1 update-kubeconfig --name UdagramCluster
-  - kubectl apply -f deployment/backend-feed-deployment.yaml
-  - kubectl apply -f deployment/backend-user-deployment.yaml
-  - kubectl apply -f deployment/frontend-deployment.yaml
-  - kubectl apply -f deployment/reverseproxy-deployment.yaml
+
+  - kubectl apply -f deployment/

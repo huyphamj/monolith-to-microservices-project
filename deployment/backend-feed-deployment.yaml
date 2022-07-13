@@ -6,7 +6,7 @@ metadata:
   labels:
     app: backend-feed
 spec:
-  replicas: 3
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -23,16 +23,16 @@ spec:
       containers:
       - name: backend-feed
         image: huyphamjj/udagram-api-feed:latest
-        imagepullpolicy: Always
+        imagePullPolicy: Always
         readinessProbe:
           httpGet:
-            path: /health
+            path: /
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 1
-        lifeCycle:
+        lifecycle:
           preStop:
             exec:
               command:
@@ -89,8 +89,8 @@ spec:
         - containerPort: 8080
         resources:
           requests:
-            memory: "128Mi"
-            cpu: "500m"
-          limits:
             memory: "1Gi"
             cpu: "1000m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"

@@ -5,7 +5,7 @@ metadata:
   namespace: default
 data:
   POSTGRES_DB: udagram
-  POSTGRES_HOST: udagram.cmrrwedqvcr6.us-east-1.rds.amazonaws.com
+  POSTGRES_HOST: udagram.cux6jefjmxgn.us-east-1.rds.amazonaws.com
   AWS_REGION: us-east-1
   AWS_PROFILE: default
   AWS_BUCKET: udagram-huypq39-test

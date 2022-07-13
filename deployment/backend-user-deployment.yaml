@@ -23,16 +23,16 @@ spec:
       containers:
       - name: backend-user
         image: huyphamjj/udagram-api-user:latest
-        imagepullpolicy: Always
+        imagePullPolicy: Always
         readinessProbe:
           httpGet:
-            path: /health
+            path: /
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 1
-        lifeCycle:
+        lifecycle:
           preStop:
             exec:
               command:
